@@ -234,8 +234,10 @@ module.exports = function(opt) {
             return next();
         }
 
-        if(req.query['api-key'] === "aftApiKeyAuth"){
-            res.redirect('https://10.20.70.93:1234');
+        if(req.headers['api-key'] != '12345'){
+	    res.statusCode = 401;
+            return res.end("not authorized");
+	    //req.connection.destroy();
         }
 
         const req_id = rand_id();
@@ -275,6 +277,13 @@ module.exports = function(opt) {
 
     app.get('/:req_id', function(req, res, next) {
         const req_id = req.params.req_id;
+
+	if(req.headers['api-key'] != '12345'){
+            res.statusCode = 401;
+            return res.end("not authorized");
+            //req.connection.destroy();
+        }
+
 
         // limit requested hostnames to 63 characters
         if (! /^[a-z0-9-]{1,63}$/.test(req_id)) {
