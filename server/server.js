@@ -228,13 +228,16 @@ module.exports = function(opt) {
     const schema = opt.secure ? 'https' : 'http';
 
     const app = express();
+    if (process.argv[5]){var apiKey = process.argv[5]}else{console.log("api-key is mandatory")};
+    debug('Entered apiKey --> %s', apiKey);
 
     app.get('/', function(req, res, next) {
         if (req.query['new'] === undefined) {
             return next();
         }
 
-        if(req.headers['api-key'] != '12345'){
+        if(req.headers['api-key'] != apiKey ){
+//        if(req.headers['api-key'] != '12345'){
 	    res.statusCode = 401;
             return res.end("not authorized");
 	    //req.connection.destroy();
@@ -278,7 +281,8 @@ module.exports = function(opt) {
     app.get('/:req_id', function(req, res, next) {
         const req_id = req.params.req_id;
 
-	if(req.headers['api-key'] != '12345'){
+	if(req.headers['api-key'] != apiKey ){
+	//if(req.headers['api-key'] != '12345'){
             res.statusCode = 401;
             return res.end("not authorized");
             //req.connection.destroy();
